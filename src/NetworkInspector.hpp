@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 namespace Scarlet
 {
@@ -10,6 +12,6 @@ namespace Scarlet
             NetworkInspector() = default;
             ~NetworkInspector() = default;
 
-            static std::string Test();
+            std::string Test();
     };
 }

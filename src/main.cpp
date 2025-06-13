@@ -15,8 +15,10 @@ int main()
     // 1. Create socket
     std::cout << "ScarletServer initializing " << "...\n";
 
+    int server_fd, new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
+    char buffer[4096] = {0};
 
     std::cout << "DEBUG: " << address.sin_port << "...\n";
     std::cout << "DEBUG: " << std::to_string(address.sin_addr.s_addr) << "...\n";
@@ -27,6 +29,13 @@ int main()
 
     // 1. Create socket
     std::cout << "ScarletServer attempt to create socket " << "...\n";
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd < 0) {
+        perror("socket failed");
+        return 1;
+    }
+    std::cout << "ScarletServer socket created " << "...\n";
+    // end: minimal socket hookup for ip4
 
     // 2. Bind to port
     std::cout << "ScarletServer binding to port " << LOCAL_PORT << "...\n";
