@@ -4,4 +4,4 @@ project(Scarlet)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Scarlet main.cpp)
+add_executable(Scarlet src/main.cpp)
