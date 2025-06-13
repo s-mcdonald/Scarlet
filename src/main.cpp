@@ -6,6 +6,7 @@
 
 #include "Logging/ServerLog.hpp"
 #include "NetworkInspector.hpp"
+#include "TcpServer.hpp"
 
 #define LOCAL_PORT 8080
 #define DEFAULT_PORT 80
@@ -14,6 +15,7 @@
 // https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7
 int main()
 {
+    Scarlet::TcpServer server;
     Scarlet::NetworkInspector netInspector;
 
     // 1. Create socket
