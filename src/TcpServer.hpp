@@ -5,7 +5,15 @@ namespace Scarlet
 {
     class TcpServer
     {
+        public:
+            TcpServer() = default;
+            ~TcpServer() = default;
+            TcpServer(const TcpServer &) = delete;
 
+        static int Start()
+        {
+            return 0;
+        }
     };
 }
 
