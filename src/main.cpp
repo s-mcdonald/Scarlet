@@ -40,7 +40,9 @@ int main()
 
     // 2. Bind to port
     std::cout << "ScarletServer binding to port " << LOCAL_PORT << "...\n";
-
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY; // 0.0.0.0
+    address.sin_port = htons(LOCAL_PORT);
     // 3. Listen
     std::cout << "ScarletServer listening on port " << LOCAL_PORT << "...\n";
 
