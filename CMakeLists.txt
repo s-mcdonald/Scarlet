@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(Scarlet src/main.cpp
         src/NetworkInspector.cpp
-        src/NetworkInspector.hpp)
+        src/NetworkInspector.hpp
+        src/TcpServer.hpp)
