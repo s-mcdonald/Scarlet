@@ -8,6 +8,7 @@
 #define DEFAULT_PORT 80
 
 // https://medium.com/@sakhawy/creating-an-http-server-from-scratch-ed41ef83314b
+// https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7
 int main()
 {
     Scarlet::NetworkInspector netInspector;
