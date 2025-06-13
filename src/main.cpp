@@ -2,12 +2,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "NetworkInspector.hpp"
+
 #define LOCAL_PORT 8080
 #define DEFAULT_PORT 80
 
 // https://medium.com/@sakhawy/creating-an-http-server-from-scratch-ed41ef83314b
 int main()
 {
+    Scarlet::NetworkInspector netInspector;
+
     // 1. Create socket
     std::cout << "ScarletServer initializing " << "...\n";
 
