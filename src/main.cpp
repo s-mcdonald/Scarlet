@@ -39,7 +39,7 @@ int main()
         Scarlet::ServerLog::critical() << "ScarletServer Failed to create socket connection ";
         return 1;
     }
-    Scarlet::ServerLog::info() << "ScarletServer SUCCESS: socket created " << "...";
+    Scarlet::ServerLog::success() << "ScarletServer socket created " << "...";
     // end: minimal socket hookup for ip4
 
     // 2. Bind to port
