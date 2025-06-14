@@ -10,7 +10,7 @@ add_executable(
         src/NetworkInspector.cpp
         src/NetworkInspector.hpp
         src/TcpServer.hpp
-        src/HttpRequest.cpp
+        src/Http/HttpRequest.hpp
         src/Logging/ServerLog.hpp
         src/Http/ScarletRequest.hpp
 )
