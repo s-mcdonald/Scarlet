@@ -5,7 +5,6 @@
 #include <arpa/inet.h>
 
 #include "Logging/ServerLog.hpp"
-#include "NetworkInspector.hpp"
 #include "TcpServer.hpp"
 
 #define LOCAL_PORT 8080
@@ -16,7 +15,6 @@
 int main()
 {
     Scarlet::TcpServer tcpServer;
-    Scarlet::NetworkInspector netInspector;
 
     Scarlet::ServerLog::info() << "ScarletServer initializing " << "...";
     if (tcpServer.Start() == 1)
