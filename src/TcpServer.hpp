@@ -5,10 +5,12 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "Logging/ServerLog.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <string>
+
+#include "Logging/ServerLog.hpp"
+#include "Http/HttpRequest.hpp"
 
 #define LOCAL_PORT 8080
 #define DEFAULT_PORT 80
@@ -48,6 +50,8 @@ namespace Scarlet
                     return 1;
                 }
 
+                m_isRunning = true;
+
                 return 0;
             }
 
@@ -61,7 +65,7 @@ namespace Scarlet
 
                 ssize_t bytesRead;
 
-                while (true)
+                while (m_isRunning)
                 {
                     // 4. Accept one connection
                     Scarlet::ServerLog::info() << "ScarletServer accepting connection " << "...";
@@ -77,8 +81,16 @@ namespace Scarlet
                     ssize_t bytesRead = read(m_new_socket, m_buffer, sizeof(m_buffer) - 1);
                     if (bytesRead > 0) {
                         m_buffer[bytesRead] = '\0';
-                        Scarlet::ServerLog::debug() << "ScarletServer Received request:\n" << m_buffer;
+                       // Scarlet::ServerLog::debug() << "ScarletServer Received request:\n" << m_buffer;
+                        Scarlet::HttpRequest request{std::string(m_buffer)};
+                        Scarlet::ServerLog::debug() << "(!) New Request Received: ";
+                        // Scarlet::ServerLog::debug() << "Parsed Method: " << request.GetRawMethod();
+                        // Scarlet::ServerLog::debug() << "Parsed Path: " << request.GetRawPath();
+                        // Scarlet::ServerLog::debug() << "Parsed Version: " << request.GetRawVersion();
+                        // Scarlet::ServerLog::debug() << "Parsed Headers Count: " << request.GetRawHeaders().size();
                     }
+
+                    // parse request and decide what to do!
 
                     // 6. Send basic HTTP response
                     Scarlet::ServerLog::info() << "ScarletServer sending response "  << "...";
@@ -99,10 +111,11 @@ namespace Scarlet
                 }
             }
 
-            void Stop() const
+            void Stop()
             {
                 close(m_new_socket);
                 close(m_server_fd);
+                m_isRunning = false;
             }
 
         private:
@@ -111,5 +124,6 @@ namespace Scarlet
             struct sockaddr_in m_address{};
             int m_addrlen = sizeof(m_address);
             char m_buffer[4096] = {0};
+            bool m_isRunning = false;
     };
 }
