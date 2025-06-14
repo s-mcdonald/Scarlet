@@ -84,10 +84,11 @@ namespace Scarlet
                        // Scarlet::ServerLog::debug() << "ScarletServer Received request:\n" << m_buffer;
                         Scarlet::HttpRequest request{std::string(m_buffer)};
                         Scarlet::ServerLog::debug() << "(!) New Request Received: ";
-                        // Scarlet::ServerLog::debug() << "Parsed Method: " << request.GetRawMethod();
-                        // Scarlet::ServerLog::debug() << "Parsed Path: " << request.GetRawPath();
-                        // Scarlet::ServerLog::debug() << "Parsed Version: " << request.GetRawVersion();
-                        // Scarlet::ServerLog::debug() << "Parsed Headers Count: " << request.GetRawHeaders().size();
+                        Scarlet::ServerLog::debug() << " - Parsed Scarlet Req Type: " << ScarletRequestTypeToString(request.GetRequestType());
+                        Scarlet::ServerLog::debug() << " - Parsed Http Req: " << request.GetRawMethod();
+                        Scarlet::ServerLog::debug() << " - Parsed Path: " << request.GetRawPath();
+                        Scarlet::ServerLog::debug() << " - Parsed Version: " << request.GetRawVersion();
+                        Scarlet::ServerLog::debug() << " - Parsed Headers Count: " << request.GetRawHeaders().size();
                     }
 
                     // parse request and decide what to do!

@@ -28,7 +28,6 @@ namespace Scarlet
             }
 
         private:
-        private:
             void flush()
             {
                 const std::string reset = "\033[0m";

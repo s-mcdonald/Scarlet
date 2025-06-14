@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include "ScarletRequestType.hpp"
+
 namespace Scarlet
 {
     class HttpRequest
@@ -16,7 +18,12 @@ namespace Scarlet
 
             std::string GetRawMethod() const
             {
-                return m_method;
+                return m_rawMethod;
+            }
+
+            ScarletRequestType GetRequestType() const
+            {
+                return m_scarletMethod;
             }
 
             std::string GetRawPath() const
@@ -43,7 +50,23 @@ namespace Scarlet
                 if (std::getline(stream, line))
                 {
                     std::istringstream request_line(line);
-                    request_line >> m_method >> m_path >> m_version;
+
+                    // what if we read mal formed data input
+
+                    // if (request_line >> method >> path >> version) {
+                    //
+                    // } else {
+                    //     // Malformed request line
+                    // }
+
+                    request_line >> m_rawMethod >> m_path >> m_version;
+
+                    // simple parsing of req type to SRT (httpMethod -> ScarletRequestType)
+                    if (m_rawMethod == "GET")
+                    {
+                        m_scarletMethod = ScarletRequestType::GET;
+                    }
+                    // we can add more later.
                 }
 
                 while (std::getline(stream, line) && line != "\r")
@@ -78,7 +101,8 @@ namespace Scarlet
             }
 
         private:
-            std::string m_method; // let's change this to enum class later
+            ScarletRequestType m_scarletMethod{ScarletRequestType::PING};
+            std::string m_rawMethod; // let's change this to enum class later
             std::string m_path;
             std::string m_version;
             std::map<std::string, std::string> m_headers;
