@@ -12,4 +12,5 @@ add_executable(
         src/TcpServer.hpp
         src/HttpRequest.cpp
         src/Logging/ServerLog.hpp
+        src/Http/ScarletRequest.hpp
 )
