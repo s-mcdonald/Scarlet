@@ -7,6 +7,9 @@ namespace Scarlet
         PING = 0,
         GET,
         SET,
+
+        // We can support the other request later
+        // btw, these are Redis requests, we might not want to replicvate all
         // HSET,
         // HGET,
         // LPUSH,
