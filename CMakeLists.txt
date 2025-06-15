@@ -12,4 +12,5 @@ add_executable(
         src/Http/HttpResponse.hpp
         src/Logging/ServerLog.hpp
         src/Http/ScarletRequestType.hpp
+        src/Socket.hpp
 )
