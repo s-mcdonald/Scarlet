@@ -4,15 +4,21 @@
 #include <sstream>
 #include <string>
 
+#include <iostream>
+#include <cstring>
+
+#include "../BaseResponse.hpp"
+
 namespace Scarlet
 {
-    class HttpResponse
+    class HttpResponse : public BaseResponse
     {
         public:
             HttpResponse()
-                : m_statusCode(200),
-                m_statusMessage("OK"),
-                m_version("HTTP/1.1")
+                : BaseResponse()
+                , m_statusCode(200)
+                , m_statusMessage("OK")
+                , m_version("HTTP/1.1")
             {
             }
 
@@ -24,6 +30,11 @@ namespace Scarlet
 
             void SetHeader(const std::string& key, const std::string& value)
             {
+                if (key == "Content-Length")
+                {
+                    // throw error or exception as this should not be set manually
+                }
+
                 m_headers[key] = value;
             }
 
@@ -33,7 +44,13 @@ namespace Scarlet
                 m_headers["Content-Length"] = std::to_string(body.size());
             }
 
-            [[nodiscard]] std::string GetRawResponse() const
+            void SetBodyDev()
+            {
+                m_body = "Hello World!  : " +  std::to_string(10 + rand() % 90);
+                m_headers["Content-Length"] = std::to_string(m_body.size());
+            }
+
+            [[nodiscard]] std::string GetRawResponse() const override
             {
                 std::ostringstream response;
 
@@ -50,6 +67,52 @@ namespace Scarlet
                 response << m_body;
 
                 return response.str();
+            }
+
+            [[nodiscard]] const char* GetRawResponseAsCString() const override
+            {
+                return GetRawResponse().c_str();
+            }
+
+            [[nodiscard]] const size_t GetResponseBodySize() const override
+            {
+                return m_body.size();
+            }
+
+            void SetKeepAliveTimeout(const int timeout)
+            {
+                SetKeepAlive(timeout, -1);
+            }
+
+            void SetKeepAliveMax(const int max)
+            {
+                SetKeepAlive(-1, max);
+            }
+
+            void SetKeepAlive(const int timeout = -1, const int max = -1)
+            {
+                m_headers["Connection"] = "keep-alive";
+
+                std::string keepAliveValue;
+
+                if (timeout > 0)
+                {
+                    keepAliveValue += "timeout=" + std::to_string(timeout);
+                }
+
+                if (max > 0)
+                {
+                    if (!keepAliveValue.empty())
+                    {
+                        keepAliveValue += ", ";
+                    }
+                    keepAliveValue += "max=" + std::to_string(max);
+                }
+
+                if (!keepAliveValue.empty())
+                {
+                    m_headers["Keep-Alive"] = keepAliveValue;
+                }
             }
 
         private:

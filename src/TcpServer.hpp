@@ -4,22 +4,14 @@
 #include <cstring>
 #include <unistd.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cstdlib>
-#include <ctime>
 #include <string>
 
 #include "Logging/ServerLog.hpp"
 #include "Http/HttpRequest.hpp"
+#include "Http/HttpResponse.hpp"
 
 #define LOCAL_PORT 8080
 #define DEFAULT_PORT 80
-
-// dev only - to check we are receiving a new req lets use a random number
-inline int randomTwoDigit()
-{
-    return 10 + rand() % 90;
-}
 
 namespace Scarlet
 {
@@ -30,6 +22,11 @@ namespace Scarlet
             ~TcpServer() = default;
             TcpServer(const TcpServer &) = delete;
 
+            //
+            // Attempt to start the server by creating a socket, obtaining
+            // a file descriptor, and binding it to an available port.
+            // If binding fails, retry in a loop. (WIP)
+            //
             int Start()
             {
                 Scarlet::ServerLog::info() << "ScarletServer attempt to create socket " << "...";
@@ -65,9 +62,13 @@ namespace Scarlet
 
                 ssize_t bytesRead;
 
+                //
+                // While connection/server is running, lets accept inbound connections
+                // only close connection for non-keep-alive req.
+                //
                 while (m_isRunning)
                 {
-                    // 4. Accept one connection
+                    // 4.
                     Scarlet::ServerLog::info() << "ScarletServer accepting connection " << "...";
                     m_new_socket = accept(m_server_fd, (struct sockaddr*)&m_address, (socklen_t*)&m_addrlen);
 
@@ -76,7 +77,6 @@ namespace Scarlet
                         continue;
                     }
 
-                    // 5. Read request
                     Scarlet::ServerLog::info() << "ScarletServer reading request " << "...";
                     ssize_t bytesRead = read(m_new_socket, m_buffer, sizeof(m_buffer) - 1);
                     if (bytesRead > 0) {
@@ -91,23 +91,16 @@ namespace Scarlet
                         Scarlet::ServerLog::debug() << " - Parsed Headers Count: " << request.GetRawHeaders().size();
                     }
 
-                    // parse request and decide what to do!
 
-                    // 6. Send basic HTTP response
+
+
                     Scarlet::ServerLog::info() << "ScarletServer sending response "  << "...";
-                    int randomNumber = randomTwoDigit();
-                    std::string body = "Hello world " + std::to_string(randomNumber);
-                    std::string response =
-                        "HTTP/1.1 200 OK\r\n"
-                        "Content-Type: text/plain\r\n"
-                        "Content-Length: " + std::to_string(body.size()) + "\r\n"
-                        "Connection: close\r\n"
-                        "\r\n" +
-                        body;
+                    HttpResponse responseObject;
+                    responseObject.SetHeader("Content-Type", "application/json"); // text/plain
+                    responseObject.SetBodyDev();
 
-
-                    send(m_new_socket, response.c_str(), response.size(), 0);
-                    close(m_new_socket);
+                    send(m_new_socket, responseObject.GetRawResponseAsCString(), responseObject.GetResponseBodySize(), 0);
+                    close(m_new_socket); // dont do this for keep alive conenctions
                     Scarlet::ServerLog::success() << "ScarletServer response sent OK "  << "...";
                 }
             }
