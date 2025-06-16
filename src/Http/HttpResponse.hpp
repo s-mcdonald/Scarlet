@@ -3,7 +3,6 @@
 #include <map>
 #include <sstream>
 #include <string>
-
 #include <iostream>
 #include <cstring>
 
@@ -44,12 +43,6 @@ namespace Scarlet
                 m_headers["Content-Length"] = std::to_string(body.size());
             }
 
-            void SetBodyDev()
-            {
-                m_body = "Hello World!  : " +  std::to_string(10 + rand() % 90);
-                m_headers["Content-Length"] = std::to_string(m_body.size());
-            }
-
             [[nodiscard]] std::string GetRawResponse() const override
             {
                 std::ostringstream response;
@@ -61,9 +54,8 @@ namespace Scarlet
                     response << header.first << ": " << header.second << "\r\n";
                 }
 
-                response << "\r\n"; // End of headers
+                response << "\r\n";
 
-                // Body
                 response << m_body;
 
                 return response.str();
