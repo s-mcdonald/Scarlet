@@ -52,7 +52,7 @@ namespace Scarlet
             return *this;
         }
 
-        void Bind(uint16_t port) const
+        bool Bind(uint16_t port) const
         {
             sockaddr_in addr{};
             addr.sin_family = AF_INET;
@@ -60,19 +60,21 @@ namespace Scarlet
             addr.sin_port = htons(port);
 
             if (bind(m_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
-            //if (::bind(m_fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
             {
-                throw std::runtime_error("Failed to bind socket");
+                return false;
             }
+
+            return true;
         }
 
-            // make this 10
-        void Listen(int backlog = 3) const
+        bool Listen(int backlog = 10) const
         {
             if (::listen(m_fd, backlog) < 0)
             {
-                throw std::runtime_error("Failed to listen on socket");
+                return false;
             }
+
+            return true;
         }
 
         Socket Accept(sockaddr_in* clientAddr = nullptr) const
@@ -83,7 +85,7 @@ namespace Scarlet
 
             if (new_fd < 0)
             {
-                throw std::runtime_error("Accept failed");
+                throw std::exception();
             }
 
             if (clientAddr)
@@ -102,6 +104,14 @@ namespace Scarlet
         [[nodiscard]] bool IsValid() const
         {
             return m_fd >= 0;
+        }
+
+        void Close()
+        {
+            if (IsValid())
+            {
+                ::close(m_fd);
+            }
         }
 
     private:
