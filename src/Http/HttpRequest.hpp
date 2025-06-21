@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "ScarletRequestType.hpp"
+#include "../Scarlet/ScarletRequestType.hpp"
 
 namespace Scarlet
 {
