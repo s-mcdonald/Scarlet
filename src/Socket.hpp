@@ -23,10 +23,7 @@ namespace Scarlet
 
         ~Socket()
         {
-            if (IsValid())
-            {
-                ::close(m_fd);
-            }
+            Close();
         }
 
         Socket(const Socket&) = delete;
@@ -52,7 +49,7 @@ namespace Scarlet
             return *this;
         }
 
-        bool Bind(uint16_t port) const
+        [[nodiscard]] bool Bind(uint16_t port) const
         {
             sockaddr_in addr{};
             addr.sin_family = AF_INET;
@@ -67,7 +64,7 @@ namespace Scarlet
             return true;
         }
 
-        bool Listen(int backlog = 10) const
+        [[nodiscard]] bool Listen(int backlog = 10) const
         {
             if (::listen(m_fd, backlog) < 0)
             {
@@ -77,7 +74,7 @@ namespace Scarlet
             return true;
         }
 
-        Socket Accept(sockaddr_in* clientAddr = nullptr) const
+        [[nodiscard]] Socket Accept() const
         {
             socklen_t len = sizeof(sockaddr_in);
             sockaddr_in addr{};
@@ -86,11 +83,6 @@ namespace Scarlet
             if (new_fd < 0)
             {
                 throw std::exception();
-            }
-
-            if (clientAddr)
-            {
-                *clientAddr = addr;
             }
 
             return Socket(new_fd);
@@ -106,7 +98,7 @@ namespace Scarlet
             return m_fd >= 0;
         }
 
-        void Close()
+        void Close() const
         {
             if (IsValid())
             {
