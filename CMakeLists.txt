@@ -13,4 +13,5 @@ add_executable(
         src/Logging/ServerLog.hpp
         src/Http/ScarletRequestType.hpp
         src/Socket.hpp
+        src/Scarlet/ScarletResponse.hpp
 )
