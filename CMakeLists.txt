@@ -6,13 +6,13 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(
         Scarlet
-        src/main.cpp
-        src/TcpServer.hpp
-        src/Http/HttpRequest.hpp
-        src/Http/HttpResponse.hpp
-        src/Logging/ServerLog.hpp
-        src/Http/ScarletRequestType.hpp
-        src/Socket.hpp
-        src/Scarlet/ScarletResponse.hpp
-        src/Scarlet/ScarletType.hpp
+        src/Server/main.cpp
+        src/Server/TcpServer.hpp
+        src/Server/Http/HttpRequest.hpp
+        src/Server/Http/HttpResponse.hpp
+        src/Server/Logging/ServerLog.hpp
+        src/Server/Socket.hpp
+        src/Server/Scarlet/ScarletResponse.hpp
+        src/Server/Scarlet/ScarletType.hpp
+        src/Server/Scarlet/ScarletRequestType.hpp
 )
