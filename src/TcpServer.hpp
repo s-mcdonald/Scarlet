@@ -3,12 +3,12 @@
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
-#include <netinet/in.h>
 #include <string>
 
 #include "Logging/ServerLog.hpp"
 #include "Http/HttpRequest.hpp"
 #include "Http/HttpResponse.hpp"
+#include "Scarlet/ScarletResponse.hpp"
 #include "Socket.hpp"
 
 #define LOCAL_PORT 8080
@@ -30,21 +30,15 @@ namespace Scarlet
             //
             int Start()
             {
-                Scarlet::ServerLog::info() << "ScarletServer attempt to create socket " << "...";
-
-                // Bind to port
-                Scarlet::ServerLog::info() << "ScarletServer attempt to bind to port " << LOCAL_PORT << "...";
-
-                if (!serverSocket.Bind(8080))
+                if (!serverSocket.Bind(LOCAL_PORT))
                 {
-                    Scarlet::ServerLog::critical() << "ScarletServer bind failed " << "...\n";
+                    Scarlet::ServerLog::critical() << "ScarletServer binding socket to port failed " << "...\n";
                     return -1;
                 }
 
-                Scarlet::ServerLog::info() << "ScarletServer Attempt to Listening on port " << LOCAL_PORT << "...";
                 if (!serverSocket.Listen())
                 {
-                    Scarlet::ServerLog::critical() << "ScarletServer Listen failed " << "...\n";
+                    Scarlet::ServerLog::critical() << "ScarletServer Attempt to Listening on port failed " << LOCAL_PORT << "...";
                     Stop();
                     return -1;
                 }
@@ -56,20 +50,25 @@ namespace Scarlet
 
             void StartListen()
             {
-                //
-                // While connection/server is running, lets accept inbound connections
-                // only close connection for non-keep-alive req.
-                //
+                Scarlet::ServerLog::success() << "ScarletServer initialized and running " << "...";
+
                 while (m_isRunning)
                 {
-                    sockaddr_in clientAddr{};
-                    Scarlet::Socket m_new_socket = serverSocket.Accept(&clientAddr);
+                    Scarlet::ServerLog::info() << "ScarletServer waiting for request " << "...";
 
-                    // still need to catch exception here..
-                    Scarlet::ServerLog::info() << "ScarletServer accepting connection " << "...";
+                    Socket clientSocket;
 
-                    Scarlet::ServerLog::info() << "ScarletServer reading request " << "...";
-                    ssize_t bytesRead = read(m_new_socket.GetFD(), m_buffer, sizeof(m_buffer) - 1);
+                    try {
+                        clientSocket = serverSocket.Accept();
+                    }
+                    catch (const std::exception& e) {
+                        Scarlet::ServerLog::error() << "ScarletServer failed accepting connection " << "...";
+                        continue;
+                    }
+
+                    Scarlet::ServerLog::success() << "ScarletServer request received " << "...";
+
+                    ssize_t bytesRead = read(clientSocket.GetFD(), m_buffer, sizeof(m_buffer) - 1);
                     if (bytesRead > 0)
                     {
                         m_buffer[bytesRead] = '\0';
@@ -83,15 +82,20 @@ namespace Scarlet
                         Scarlet::ServerLog::debug() << " - Parsed Headers Count: " << request.GetRawHeaders().size();
                     }
 
-
-
                     Scarlet::ServerLog::info() << "ScarletServer sending response "  << "...";
-                    HttpResponse responseObject;
-                    responseObject.SetHeader("Content-Type", "text/plain");
-                    responseObject.SetBody("Hello World!");
+
+
+                    // decide depending on inbound connection if we need a HttpResponse or a scarlet Response
+                    // only require http response for non ScarletClients or directApi requests.
+                    ScarletResponse responseObject = ScarletResponse::createBulkString("foo\r\nbar");
+
+                    // HttpResponse responseObject;
+                    // responseObject.SetHeader("Content-Type", "text/plain");
+                    // responseObject.SetHeader("Scarlet-Data-Type", "integer");
+                    // responseObject.SetBody("123");
 
                     std::string raw = responseObject.GetRawResponse();
-                    size_t bytesSent = send(m_new_socket.GetFD(), raw.c_str(), raw.size(), 0);
+                    size_t bytesSent = send(clientSocket.GetFD(), raw.c_str(), raw.size(), 0);
 
                     if (bytesSent < 0)
                     {
@@ -102,7 +106,7 @@ namespace Scarlet
                         Scarlet::ServerLog::success() << "ScarletServer response sent OK "  << "...";
                     }
 
-                    m_new_socket.Close();
+                    clientSocket.Close();
                 }
             }
 
