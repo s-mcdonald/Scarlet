@@ -14,4 +14,5 @@ add_executable(
         src/Http/ScarletRequestType.hpp
         src/Socket.hpp
         src/Scarlet/ScarletResponse.hpp
+        src/Scarlet/ScarletType.hpp
 )

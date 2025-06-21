@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "ScarletType.hpp"
 #include "../BaseResponse.hpp"
 
 namespace Scarlet
@@ -11,15 +12,6 @@ namespace Scarlet
     class ScarletResponse : public BaseResponse
     {
         public:
-            enum class Type
-            {
-                SIMPLE_STRING,
-                ERROR,
-                INTEGER,
-                BULK_STRING,
-                ARRAY
-            };
-
             ScarletResponse() = default;
 
             static ScarletResponse createSimpleString(const std::string& value)
