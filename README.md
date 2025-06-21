@@ -9,3 +9,24 @@ This is a learning exercise and definitely not intended for production use.
 * Not concerned for multi threading/concurrency however I may also include this later in development.
 * Support for strings, integers, and lists (similar to Redis primitives).
 * Persistent Mode - Optionally dump the in-memory store to disk and restore it later.
+
+
+## TCP Request & Response Handling
+
+The server supports TCP connections initiated from any supporting TCP clients, including web browsers. 
+Because these sources have different expectations, the server will tailor responses based on the request type:
+Request Types
+
+
+### Example: HTTP Request / Response
+
+
+### Example: Raw TCP Request / Response
+
+```
+PING
+```
+
+```
++PONG\r\n
+```
