@@ -1,5 +1,5 @@
-#include "Logging/ServerLog.hpp"
 #include "TcpServer.hpp"
+#include "Logging/ServerLog.hpp"
 
 // https://medium.com/@sakhawy/creating-an-http-server-from-scratch-ed41ef83314b
 // https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7
