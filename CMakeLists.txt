@@ -21,4 +21,5 @@ add_executable(
 add_executable(
         ScarletClient
         src/Client/main.cpp
+        src/Client/Socket.hpp
 )
