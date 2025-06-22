@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <cstring>
+#include <arpa/inet.h>
 
 namespace Scarlet
 {
@@ -105,6 +106,31 @@ namespace Scarlet
                 ::close(m_fd);
             }
         }
+
+        // Client Side interactions
+        [[nodiscard]] bool Connect(const std::string& ip, uint16_t port) const
+        {
+            sockaddr_in server_addr{};
+            server_addr.sin_family = AF_INET;
+            server_addr.sin_port = htons(port);
+            if (inet_pton(AF_INET, ip.c_str(), &server_addr.sin_addr) <= 0)
+            {
+                return false;
+            }
+
+            return ::connect(m_fd, (sockaddr*)&server_addr, sizeof(server_addr)) >= 0;
+        }
+
+        [[nodiscard]] ssize_t Send(const std::string& data) const
+        {
+            return ::send(m_fd, data.c_str(), data.size(), 0);
+        }
+
+        size_t Recv(char* buffer, size_t size) const
+        {
+            return ::recv(m_fd, buffer, size, 0);
+        }
+
 
     private:
         int m_fd{-1};
